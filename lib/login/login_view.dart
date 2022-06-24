@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -9,6 +10,8 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +28,7 @@ class _LoginViewState extends State<LoginView> {
                     child: Column(
                       children: [
                         TextFormField(
+                          controller: _usernameController,
                           decoration:
                               const InputDecoration(hintText: "Username"),
                           validator: (value) {
@@ -35,6 +39,7 @@ class _LoginViewState extends State<LoginView> {
                           },
                         ),
                         TextFormField(
+                          controller: _passwordController,
                           obscureText: true,
                           decoration:
                               const InputDecoration(hintText: "Password"),
@@ -46,12 +51,15 @@ class _LoginViewState extends State<LoginView> {
                           },
                         ),
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Processing Data')),
-                              );
+                              final response = await http.post(
+                                  Uri.parse(
+                                      'http://192.168.0.87:3000/security/login'),
+                                  body: {
+                                    'username': _usernameController.text,
+                                    'password': _passwordController.text
+                                  });
                             }
                           },
                           child: const Text('Login'),
