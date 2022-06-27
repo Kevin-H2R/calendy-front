@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,6 +14,7 @@ class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  String _error = "";
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +53,12 @@ class _LoginViewState extends State<LoginView> {
                             return null;
                           },
                         ),
+                        Text(_error, style: TextStyle(color: Colors.red)),
                         ElevatedButton(
                           onPressed: () async {
+                            setState(() {
+                              _error = "";
+                            });
                             if (_formKey.currentState!.validate()) {
                               final response = await http.post(
                                   Uri.parse(
@@ -60,6 +67,20 @@ class _LoginViewState extends State<LoginView> {
                                     'username': _usernameController.text,
                                     'password': _passwordController.text
                                   });
+                              Map<String, dynamic> body =
+                                  jsonDecode(response.body);
+                              int statusCode = body['statusCode'];
+                              if (statusCode == 404) {
+                                setState(() {
+                                  _error =
+                                      "Username is wrong, please double check";
+                                });
+                              }
+                              if (statusCode == 401) {
+                                setState(() {
+                                  _error = "Wrong password";
+                                });
+                              }
                             }
                           },
                           child: const Text('Login'),
