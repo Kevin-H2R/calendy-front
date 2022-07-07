@@ -6,8 +6,12 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 class CalendarWidget extends StatefulWidget {
   final CalendarView view;
   final Function(Event?) notifyEventTapped;
+  final Function(DateTime?) notifyDateTimeSelected;
   const CalendarWidget(
-      {Key? key, required this.view, required this.notifyEventTapped})
+      {Key? key,
+      required this.view,
+      required this.notifyEventTapped,
+      required this.notifyDateTimeSelected})
       : super(key: key);
 
   @override
@@ -55,6 +59,7 @@ juste comment une longue description va deborder du Widget.""",
           child: SfCalendar(
         firstDayOfWeek: 1,
         onTap: (calendarTapDetails) {
+          widget.notifyDateTimeSelected(calendarTapDetails.date);
           if (calendarTapDetails.targetElement == CalendarElement.appointment) {
             final Event appointment = calendarTapDetails.appointments![0];
             widget.notifyEventTapped(appointment);

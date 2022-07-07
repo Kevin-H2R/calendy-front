@@ -20,6 +20,7 @@ class _HomeViewState extends State<HomeView> {
   CalendarView _view = CalendarView.day;
   Event? _featuredEvent;
   final PanelController _panelController = PanelController();
+  DateTime? _selectedDateTime;
 
   void _changeView(CalendarView view) {
     if (_view == view) {
@@ -34,6 +35,12 @@ class _HomeViewState extends State<HomeView> {
     event == null ? _panelController.close() : _panelController.open();
     setState(() {
       _featuredEvent = event;
+    });
+  }
+
+  void _dateTimeSelected(DateTime? dateTime) {
+    setState(() {
+      _selectedDateTime = dateTime;
     });
   }
 
@@ -78,6 +85,7 @@ class _HomeViewState extends State<HomeView> {
           CalendarWidget(
             view: _view,
             notifyEventTapped: _eventTapped,
+            notifyDateTimeSelected: _dateTimeSelected,
           ),
           SlidingUpPanel(
             controller: _panelController,
@@ -96,7 +104,8 @@ class _HomeViewState extends State<HomeView> {
                 onPressed: () {
                   Navigator.of(context).push(PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
-                        const NewEventView(),
+                        NewEventView(
+                            start: _selectedDateTime ?? DateTime.now()),
                     transitionsBuilder:
                         (context, animation, secondaryAnimation, child) {
                       const begin = Offset(0.0, 1.0);
