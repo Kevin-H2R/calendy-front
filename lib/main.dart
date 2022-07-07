@@ -37,9 +37,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> displayCorrectStartingView() async {
     const storage = FlutterSecureStorage();
-    String? id = await storage.read(key: 'CALENDY_ID');
+    String? username = await storage.read(key: 'CALENDY_USERNAME');
     setState(() {
-      _view = id == null ? const LoginView() : const HomeView();
+      _view =
+          username == null ? const LoginView() : HomeView(username: username);
       _loading = false;
     });
   }
