@@ -50,8 +50,9 @@ juste comment une longue description va deborder du Widget.""",
     setState(() {
       _calendarController.view = widget.view;
     });
-    return Stack(children: [
-      SfCalendar(
+    return Column(children: [
+      Expanded(
+          child: SfCalendar(
         onTap: (calendarTapDetails) {
           if (calendarTapDetails.targetElement == CalendarElement.appointment) {
             final Event appointment = calendarTapDetails.appointments![0];
@@ -63,14 +64,8 @@ juste comment une longue description va deborder du Widget.""",
         dataSource: EventDataSource(_getData()),
         controller: _calendarController,
         view: widget.view,
-      ),
-      Positioned(
-          bottom: 20,
-          right: 20,
-          child: FloatingActionButton(
-            onPressed: () {},
-            child: const Icon(Icons.add),
-          ))
+      )),
+      const SizedBox(height: 50)
     ]);
   }
 }

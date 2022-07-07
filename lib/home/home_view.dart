@@ -73,7 +73,12 @@ class _HomeViewState extends State<HomeView> {
             ],
           ),
         ),
-        body: SlidingUpPanel(
+        body: Stack(children: [
+          CalendarWidget(
+            view: _view,
+            notifyEventTapped: _eventTapped,
+          ),
+          SlidingUpPanel(
             controller: _panelController,
             borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(24), topRight: Radius.circular(24)),
@@ -82,10 +87,17 @@ class _HomeViewState extends State<HomeView> {
             panel: _featuredEvent == null
                 ? const SizedBox.shrink()
                 : EventInformation(event: _featuredEvent!),
-            body: Expanded(
-                child: CalendarWidget(
-              view: _view,
-              notifyEventTapped: _eventTapped,
-            ))));
+          ),
+          Positioned(
+              bottom: 20,
+              right: 20,
+              child: FloatingActionButton(
+                onPressed: () {},
+                backgroundColor: _featuredEvent == null
+                    ? const Color(0xFF2196F3)
+                    : const Color(0x992196F3),
+                child: const Icon(Icons.add),
+              ))
+        ]));
   }
 }
