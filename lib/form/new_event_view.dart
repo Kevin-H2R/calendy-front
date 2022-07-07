@@ -24,7 +24,7 @@ class _NewEventViewState extends State<NewEventView> {
     super.initState();
     setState(() {
       _start = widget.start;
-      _end = widget.start;
+      _end = widget.start.add(const Duration(hours: 1));
       _ready = true;
     });
   }
@@ -34,14 +34,19 @@ class _NewEventViewState extends State<NewEventView> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-          leading: const SizedBox.shrink(),
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
           title: const Text('New Event'),
           actions: [
             IconButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: const Icon(Icons.close))
+                icon: const Icon(Icons.check))
           ]),
       body: _ready
           ? Padding(
