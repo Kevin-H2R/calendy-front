@@ -53,6 +53,7 @@ juste comment une longue description va deborder du Widget.""",
     return Column(children: [
       Expanded(
           child: SfCalendar(
+        firstDayOfWeek: 1,
         onTap: (calendarTapDetails) {
           if (calendarTapDetails.targetElement == CalendarElement.appointment) {
             final Event appointment = calendarTapDetails.appointments![0];
