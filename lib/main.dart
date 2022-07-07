@@ -1,8 +1,11 @@
+import 'package:calendy/home/home_view.dart';
 import 'package:calendy/login/login_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(Phoenix(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -16,54 +19,46 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LoginView(),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  bool _loading = true;
+  late Widget _view;
 
-  void _incrementCounter() {
+  Future<void> displayCorrectStartingView() async {
+    const storage = FlutterSecureStorage();
+    String? id = await storage.read(key: 'CALENDY_ID');
     setState(() {
-      _counter++;
+      _view = id == null ? const LoginView() : const HomeView();
+      _loading = false;
     });
   }
 
   @override
+  void initState() {
+    super.initState();
+    displayCorrectStartingView();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+    if (_loading) {
+      return const Scaffold(
+        body: Center(
+          child: Text('SPLASH SCREEN CALENDY'),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+      );
+    }
+    return _view;
   }
 }
