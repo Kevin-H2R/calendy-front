@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class Event {
   final String title;
   final String description;
@@ -6,4 +8,12 @@ class Event {
   final bool allDay;
 
   Event(this.title, this.description, this.start, this.end, this.allDay);
+
+  String getFormattedStart() {
+    return DateFormat('yyyy-MM-dd kk:mm').format(start);
+  }
+
+  String getFormattedEnd() {
+    return DateFormat('yyyy-MM-dd kk:mm').format(end);
+  }
 }
