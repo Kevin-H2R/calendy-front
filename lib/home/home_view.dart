@@ -1,4 +1,5 @@
 import 'package:calendy/entity/event.dart';
+import 'package:calendy/form/new_event_view.dart';
 import 'package:calendy/home/calendar_widget.dart';
 import 'package:calendy/home/event_information.dart';
 import 'package:flutter/material.dart';
@@ -92,7 +93,29 @@ class _HomeViewState extends State<HomeView> {
               bottom: 20,
               right: 20,
               child: FloatingActionButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const NewEventView(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(0.0, 1.0);
+                      const end = Offset.zero;
+                      const curve = Curves.ease;
+
+                      final tween = Tween(begin: begin, end: end);
+                      final curvedAnimation = CurvedAnimation(
+                        parent: animation,
+                        curve: curve,
+                      );
+
+                      return SlideTransition(
+                        position: tween.animate(curvedAnimation),
+                        child: child,
+                      );
+                    },
+                  ));
+                },
                 backgroundColor: _featuredEvent == null
                     ? const Color(0xFF2196F3)
                     : const Color(0x992196F3),
