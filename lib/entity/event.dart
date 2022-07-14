@@ -9,6 +9,15 @@ class Event {
 
   Event(this.title, this.description, this.start, this.end, this.allDay);
 
+  factory Event.fromJson(Map<String, dynamic> json) {
+    return Event(
+        json['title'],
+        json['description'],
+        DateTime.parse(json['start']),
+        DateTime.parse(json['end']),
+        json['allDay'] == 'true');
+  }
+
   String getFormattedStart() {
     return DateFormat('yyyy-MM-dd kk:mm').format(start);
   }
