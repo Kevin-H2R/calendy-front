@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 class NewEventView extends StatefulWidget {
   final DateTime start;
@@ -18,6 +20,20 @@ class _NewEventViewState extends State<NewEventView> {
   late DateTime _end;
   bool _allDay = false;
   bool _ready = false;
+
+  void createEvent() async {
+    const storage = FlutterSecureStorage();
+    String? id = await storage.read(key: 'CALENDY_ID');
+    DateFormat formatter = DateFormat('yyyy-MM-dd kk:mm:ss');
+    await http.post(Uri.parse("http://192.168.0.87:3000/events"), body: {
+      'title': _titleController.text,
+      'description': _descriptionController.text,
+      'start': formatter.format(_start),
+      'end': formatter.format(_end),
+      'allDay': _allDay.toString(),
+      'userId': id
+    });
+  }
 
   @override
   void initState() {
@@ -44,6 +60,22 @@ class _NewEventViewState extends State<NewEventView> {
           actions: [
             IconButton(
                 onPressed: () {
+                  if (_titleController.text.isEmpty) {
+                    showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                              content: const Text("Please fill the tile"),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text("Got it"))
+                              ],
+                            ));
+                    return;
+                  }
+                  createEvent();
                   Navigator.pop(context);
                 },
                 icon: const Icon(Icons.check))
@@ -73,12 +105,12 @@ class _NewEventViewState extends State<NewEventView> {
                       const Text("All day?")
                     ]),
                     AnimatedSwitcher(
-                        duration: Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 200),
                         child: _allDay
                             ? const SizedBox(
                                 key: Key('notDisplayed'),
                               )
-                            : Column(key: Key('displayed'), children: [
+                            : Column(key: const Key('displayed'), children: [
                                 GestureDetector(
                                     onTap: () {
                                       DatePicker.showDateTimePicker(
