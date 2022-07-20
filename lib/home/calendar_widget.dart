@@ -4,6 +4,7 @@ import 'package:calendy/entity/event.dart';
 import 'package:calendy/utils/event_data_source.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:http/http.dart' as http;
 
@@ -65,8 +66,10 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         body: {'userId': _userId});
     List<dynamic> events = jsonDecode(response.body);
     for (var e in events) {
-      print(Event.fromJson(e).start);
-      _events.add(Event.fromJson(e));
+      Event event = Event.fromJson(e);
+      event.start = event.start.toLocal();
+      event.end = event.end.toLocal();
+      _events.add(event);
     }
     setState(() {
       _loading = false;
